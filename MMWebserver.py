@@ -8,6 +8,7 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(24, GPIO.IN)
 GPIO.setup(23, GPIO.IN)
+GPIO.setup(18, GPIO.OUT)
 
 ser = serial.Serial('/dev/ttyAMA0', 1200)
 ser.flush()
@@ -45,7 +46,7 @@ def sendPosition(x, y):
 	
 	#Eliminate decimal and negative numbers
 	x = (x + 90) * 10
-	y = (y + 90) + 10
+	y = (y + 90) * 10
 	
 	#Position UART
 	ser.write(str(x) + "-" + str(y) + "\0")
@@ -61,13 +62,15 @@ def sendPosition(x, y):
 		retVal = read
 	elif running == True:
 		if prevRunning == False:
-			#print "Starting the Game!!!!"
+			print "Starting the Game!!!!"
+			GPIO.output(18, GPIO.HIGH)
 			retVal = "GS"
 		else:
 			retVal = None
 	elif running == False:
 		if prevRunning == True:
-			#print "Game completed!!!!"
+			print "Game completed!!!!"
+			GPIO.output(18, GPIO.LOW)
 			retVal = "T33.5"
 		else:
 			retval = None
